@@ -533,4 +533,5 @@ Group boundaries (k) are not handled correctly
 
 Remaining nodes (< k) must not be reversed
 
-prev, nex, start, start2 logic becomes inconsistent
+
+__________________________________________________________________________________
