@@ -394,3 +394,143 @@ class Solution {
     }
 }
 ______________________________________________________________________________________________________________________________________________
+
+
+25. Reverse Nodes in k-Group
+
+
+
+
+
+
+
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+
+        if (head == null || k == 1) return head;
+
+        ListNode curr = head;
+        ListNode prevTail = null;
+        ListNode newHead = null;
+
+        while (curr != null) {
+
+            // check if k nodes exist
+            ListNode check = curr;
+            int count = 0;
+            while (count < k && check != null) {
+                check = check.next;
+                count++;
+            }
+
+            if (count < k) { // not enough nodes
+                if (prevTail != null) prevTail.next = curr;
+                break;
+            }
+
+            // reverse k nodes
+            ListNode prev = null;
+            ListNode temp = curr;
+
+            for (int i = 0; i < k; i++) {
+                ListNode next = temp.next;
+                temp.next = prev;
+                prev = temp;
+                temp = next;
+            }
+
+            if (newHead == null)
+                newHead = prev;
+
+            if (prevTail != null)
+                prevTail.next = prev;
+
+            prevTail = curr;
+            curr = temp;
+        }
+
+        return newHead == null ? head : newHead;
+    }
+}
+
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null) return null;
+
+        ListNode tail = head;
+        for (int i = 0; i < k; i++) {
+            if (tail == null) return head;
+            tail = tail.next;
+        }
+
+        ListNode newHead = reverse(head, tail);
+        head.next = reverseKGroup(tail, k);
+        return newHead;
+    }
+
+    private ListNode reverse(ListNode cur, ListNode end) {
+        ListNode prev = null;
+        while (cur != end) {
+            ListNode next = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = next;
+        }
+        return prev;
+    }
+}
+
+----
+RECURSIOn
+
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode curr = head, prev = null, nex=null;
+        int t  = k;
+        boolean f = false;
+        ListNode temp = head;
+        for(int i = 0; i < k; i++) {
+            if (temp == null) {
+                f = true;
+                return curr;
+            }
+            temp = temp.next;
+        }
+        while (t --> 0) {
+            
+            nex=curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = nex;           
+        }
+        head.next = reverseKGroup(nex, k);
+        return prev;
+    }
+}
+
+
+Time complexity: O(n)
+Space complexity: O(n/k) or O(n)
+The algorithm is recursive: each recursive call processes k nodes. There will be approximately n / k recursive calls on the call stack at the deepest point.
+This is O(n) in the worst case (when k = 1), but in practice often better.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MISTAKE:fail to think for recursion.
+Fails to update first node to null started with second node.
+Group boundaries (k) are not handled correctly
+
+Remaining nodes (< k) must not be reversed
+
+prev, nex, start, start2 logic becomes inconsistent
