@@ -303,8 +303,6 @@ premium lock icon
 Companies
 Given two integer arrays preorder and inorder where preorder is the preorder traversal of a binary tree and inorder is the inorder traversal of the same tree, construct and return the binary tree.
 
- 
-
 Example 1:
 
 
@@ -397,12 +395,6 @@ ________________________________________________________________________________
 
 
 25. Reverse Nodes in k-Group
-
-
-
-
-
-
 
 class Solution {
     public ListNode reverseKGroup(ListNode head, int k) {
@@ -512,20 +504,7 @@ class Solution {
 Time complexity: O(n)
 Space complexity: O(n/k) or O(n)
 The algorithm is recursive: each recursive call processes k nodes. There will be approximately n / k recursive calls on the call stack at the deepest point.
-This is O(n) in the worst case (when k = 1), but in practice often better.
-
-
-
-
-
-
-
-
-
-
-
-
-
+This is O(n) in the worst case (when k = 1), but in practice often better
 
 MISTAKE:fail to think for recursion.
 Fails to update first node to null started with second node.
@@ -535,3 +514,52 @@ Remaining nodes (< k) must not be reversed
 
 
 __________________________________________________________________________________
+
+PRIORITY_QUEUE
+public List<Integer> topKFrequent(int[] nums, int k) {
+
+	List<Integer>[] bucket = new List[nums.length + 1];
+	Map<Integer, Integer> frequencyMap = new HashMap<Integer, Integer>();
+
+	for (int n : nums) {
+		frequencyMap.put(n, frequencyMap.getOrDefault(n, 0) + 1);
+	}
+
+	for (int key : frequencyMap.keySet()) {
+		int frequency = frequencyMap.get(key);
+		if (bucket[frequency] == null) {
+			bucket[frequency] = new ArrayList<>();
+		}
+		bucket[frequency].add(key);
+	}
+
+	List<Integer> res = new ArrayList<>();
+
+	for (int pos = bucket.length - 1; pos >= 0 && res.size() < k; pos--) {
+		if (bucket[pos] != null) {
+			res.addAll(bucket[pos]);
+		}
+	}
+	return res;
+}
+    
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        Arrays.sort(nums);
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[1]-b[1]);
+        for(int i = 0; i < nums.length; i++) {
+            int f = 1, j = i;
+            while(i+1 < nums.length && nums[i] == nums[i+1]) {
+                f++;
+                i++;
+            }
+            pq.add(new int[]{nums[j], f});
+            if (pq.size() > k) pq.poll();
+        }
+        List<Integer> l = new ArrayList<>();
+        while(!pq.isEmpty()) {
+            l.add(pq.poll()[0]);
+        }
+        return l.stream().mapToInt(Integer::intValue).toArray();
+    }
+}
