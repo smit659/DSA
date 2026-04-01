@@ -501,3 +501,55 @@ right to left will always not invariant.
 
 negatives no not considered,,
 ______________________________________________________________________________
+
+REGULAR EXPRESSIOM (c*a == a) (Failed to understand question)
+class Solution {
+    Boolean[][] dp;
+
+    public boolean isMatch(String s, String p) {
+        dp = new Boolean[s.length() + 1][p.length() + 1];
+        return solve(s, p, 0, 0);
+    }
+
+    private boolean solve(String s, String p, int i, int j) {
+
+        if (dp[i][j] != null) return dp[i][j];
+
+        if (j == p.length())
+            return dp[i][j] = (i == s.length());
+
+        boolean match = (i < s.length() &&
+                        (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.'));
+
+        if (j + 1 < p.length() && p.charAt(j + 1) == '*') {
+            return dp[i][j] = (
+                solve(s, p, i, j + 2) ||
+                (match && solve(s, p, i + 1, j))
+            );
+        }
+
+        if (match) {
+            return dp[i][j] = solve(s, p, i + 1, j + 1);
+        }
+
+        return dp[i][j] = false;
+    }
+}
+
+TC O(2^(n+m))
+s = "aaaaaaa"   (n = 7)
+p = "a*"        (m = 2)
+
+Now recursion:
+
+(0,0)
+ → (1,0)
+ → (2,0)
+ → (3,0)
+ ...
+ → (7,0)
+
+______________________________________________________________________________
+
+
+

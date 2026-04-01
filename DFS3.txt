@@ -1,0 +1,214 @@
+TRAPPING RAIN WATER
+
+class Solution {
+    public int trap(int[] h) {
+        int [] ng = new int[h.length + 2];
+        int [] pg = new int[h.length + 2];
+        for(int i = h.length; i >= 1; i--) {
+            ng[i] = Math.max(h[i-1], ng[i+1]);
+        }
+        for(int i = 1; i <= h.length; i++) {
+            pg[i] = Math.max(h[i-1], pg[i-1]);
+        }
+        int ans  = 0;
+        for(int i = 1; i < h.length-1; i++) {
+            int s = Math.min(pg[i], ng[i+1]) - h[i];
+            if (s > 0)
+                ans += s;
+        }
+        return ans;
+    }
+}
+
+
+    class Solution {
+    public int trap(int[] height) {
+
+        int n = height.length;
+        int totalWater = 0;
+
+        int leftMax = 0;
+        int rightMax = 0;
+
+        int start = 0;
+        int end = n - 1;
+
+        while (start < end) {
+
+            leftMax = Math.max(leftMax, height[start]);
+            rightMax = Math.max(rightMax, height[end]);
+
+            if (leftMax < rightMax) {
+
+                totalWater += leftMax - height[start];
+                start++;
+
+            } else {
+
+                totalWater += rightMax - height[end];
+                end--;
+            }
+        }
+
+        return totalWater;
+    }
+}
+
+
+-______________________________________________________________________________
+
+
+2D Binary Search
+
+class Solution {
+    public boolean searchMatrix(int[][] m, int t) {
+        int c = m[0].length, r  = m.length;
+        int l = 0,  h = (c * r) - 1;
+        while (l <= h) {
+            int mid = l + (h-l)/2;
+            if (m[mid/c][mid%c] == t) return true;
+            if (m[mid/c][mid%c] > t) {
+                h = mid-1;
+            } else {
+                l = mid+1;
+            }
+        }
+        return false;
+    }
+
+
+______________________________________________________________________________
+
+Implement trie
+
+
+class Trie {
+    Node root;
+    public Trie() {
+        root = new Node();
+    }
+    
+    public void insert(String word) {
+        Node t = root;
+        for(char i : word.toCharArray()) {
+            Node x = t.arr[i-'a'];
+            if (x == null) {
+                x = new Node();
+                t.arr[i-'a'] = x;
+            }
+            t = x;
+        }
+        t.isEnd = true;
+    }
+    
+    public boolean search(String word) {
+        Node t = root;
+        for(char i : word.toCharArray()) {
+            Node x = t.arr[i-'a'];
+            if (x == null) {
+               return false;
+            }
+            t = x;
+        }
+        return t.isEnd;
+    }
+    
+    public boolean startsWith(String prefix) {
+        Node t = root;
+        for(char i : prefix.toCharArray()) {
+            Node x = t.arr[i-'a'];
+            if (x == null) {
+                return false;
+            }
+            t = x;
+        }
+        return true;
+    }
+}
+
+class Node {
+    Node [] arr;
+    boolean isEnd;
+    Node() {
+        arr = new Node[26];
+    }  
+}
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * boolean param_2 = obj.search(word);
+ * boolean param_3 = obj.startsWith(prefix);
+ */
+
+
+ class Trie {
+    Node root;
+
+    public Trie() {
+        root = new Node();
+    }
+    
+    public void insert(String word) {
+        root.insert(word, 0);
+    }
+    
+    public boolean search(String word) {
+        return root.search(word, 0);
+    }
+    
+    public boolean startsWith(String prefix) {
+        return root.startsWith(prefix, 0);
+    }
+
+    class Node {
+        Node[] nodes;
+        boolean isEnd;
+
+        Node() {
+            nodes = new Node[26];
+        }
+
+        private void insert(String word, int idx) {
+            if (idx >= word.length()) return;
+            int i = word.charAt(idx) - 'a';
+            if (nodes[i] == null) {
+                nodes[i] = new Node();
+            }
+
+            if (idx == word.length()-1) nodes[i].isEnd = true;
+            nodes[i].insert(word, idx+1);
+        }
+
+        private boolean search(String word, int idx) {
+            if (idx >= word.length()) return false;
+            Node node = nodes[word.charAt(idx) - 'a'];
+            if (node == null) return false;
+            if (idx == word.length() - 1 && node.isEnd) return true;
+
+            return node.search(word, idx+1);
+
+        }
+
+        private boolean startsWith(String prefix, int idx) {
+            if (idx >= prefix.length()) return false;
+            Node node = nodes[prefix.charAt(idx) - 'a'];
+            if (node == null) return false;
+            if (idx == prefix.length() - 1) return true;
+
+            return node.startsWith(prefix, idx+1);
+        }
+    }
+}
+
+
+Each Trie node is:
+
+Node {
+  Node[26] children
+  boolean isEnd
+}
+
+
+______________________________________________________________________________
