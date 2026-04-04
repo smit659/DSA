@@ -423,4 +423,60 @@ O(N² * L) ❌
 After optimization:
 O(N * L * 26) ≈ O(N * L) ✅
 
+Optimal
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> wordSet = new HashSet<>(wordList);
+        if (!wordSet.contains(endWord)) return 0;
+
+        Set<String> beginSet = new HashSet<>();
+        Set<String> endSet = new HashSet<>();
+
+        beginSet.add(beginWord);
+        endSet.add(endWord);
+
+        int depth = 1;
+
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+
+            // always expand smaller set
+            if (beginSet.size() > endSet.size()) {
+                Set<String> temp = beginSet;
+                beginSet = endSet;
+                endSet = temp;
+            }
+
+            Set<String> nextLevel = new HashSet<>();
+
+            for (String word : beginSet) {
+                char[] arr = word.toCharArray();
+
+                for (int i = 0; i < arr.length; i++) {
+                    char original = arr[i];
+
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        arr[i] = c;
+                        String next = new String(arr);
+
+                        if (endSet.contains(next)) {
+                            return depth + 1; // meet point
+                        }
+
+                        if (wordSet.contains(next)) {
+                            nextLevel.add(next);
+                            wordSet.remove(next);
+                        }
+                    }
+
+                    arr[i] = original;
+                }
+            }
+
+            beginSet = nextLevel;
+            depth++;
+        }
+
+        return 0;
+    }
+}
 ___________________________________________________________
