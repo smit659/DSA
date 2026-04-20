@@ -1,0 +1,114 @@
+
+
+Code
+Testcase
+Testcase
+Test Result
+Leet
+76. Minimum Window Substring
+Solved
+Hard
+Topics
+premium lock icon
+Companies
+Hint
+Given two strings s and t of lengths m and n respectively, return the minimum window substring of s such that every character in t (including duplicates) is included in the window. If there is no such substring, return the empty string "".
+
+The testcases will be generated such that the answer is unique.
+
+ 
+
+Example 1:
+
+Input: s = "ADOBECODEBANC", t = "ABC"
+Output: "BANC"
+Explanation: The minimum window substring "BANC" includes 'A', 'B', and 'C' from string t.
+
+
+
+string minWindow(string s, string t) {
+	unordered_map<char, int> m;
+	// Statistic for count of char in t
+	for (auto c : t) m[c]++;
+	// counter represents the number of chars of t to be found in s.
+	size_t start = 0, end = 0, counter = t.size(), minStart = 0, minLen = INT_MAX;
+	size_t size = s.size();
+	
+	// Move end to find a valid window.
+	while (end < size) {
+		// If char in s exists in t, decrease counter
+		if (m[s[end]] > 0)
+			counter--;
+		// Decrease m[s[end]]. If char does not exist in t, m[s[end]] will be negative.
+		m[s[end]]--;
+		end++;
+		// When we found a valid window, move start to find smaller window.
+		while (counter == 0) {
+			if (end - start < minLen) {
+				minStart = start;
+				minLen = end - start;
+			}
+			m[s[start]]++;
+			// When char exists in t, increase counter.
+			if (m[s[start]] > 0)
+				counter++;
+			start++;
+		}
+	}
+	if (minLen != INT_MAX)
+		return s.substr(minStart, minLen);
+	return "";
+}
+
+class Solution {
+    public String minWindow(String s, String t) {
+        Map<Character, Integer> m1 = new HashMap<>();
+        Map<Character, Integer> m2 = new HashMap<>();
+
+        for (char c : t.toCharArray()) {
+            m1.put(c, m1.getOrDefault(c, 0) + 1);
+        }
+
+        int required = m1.size();
+        int formed = 0;
+
+        int l = 0, r = 0;
+        int minLen = Integer.MAX_VALUE;
+        String ans = "";
+
+        while (r < s.length()) {
+            char c = s.charAt(r);
+            m2.put(c, m2.getOrDefault(c, 0) + 1);
+
+            // ✅ same idea as your x--
+            if (m1.containsKey(c) && m2.get(c).intValue() == m1.get(c).intValue()) {
+                formed++;
+            }
+
+            // ✅ shrink window while valid
+            while (l <= r && formed == required) {
+
+                // ✅ update answer only when valid
+                if (r - l + 1 < minLen) {
+                    minLen = r - l + 1;
+                    ans = s.substring(l, r + 1);
+                }
+
+                char leftChar = s.charAt(l);
+                m2.put(leftChar, m2.get(leftChar) - 1);
+
+                // ✅ restore validity if broken
+                if (m1.containsKey(leftChar) && 
+                    m2.get(leftChar) < m1.get(leftChar)) {
+                    formed--;
+                }
+
+                l++;
+            }
+
+            r++; // ✅ always move step-by-step
+        }
+
+        return ans;
+    }
+}
