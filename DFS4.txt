@@ -112,3 +112,109 @@ class Solution {
         return ans;
     }
 }
+
+
+class Solution {
+    public String minWindow(String s, String t) {
+        int l = 1, r = s.length();
+        int arr[] = new int[130];
+        for(char i : t.toCharArray()) {
+            arr[i]++;
+        }
+        String ans = ""; 
+        // int ans = Integer.MAX_VALUE;
+        while (l <= r) {
+            int m = l + (r-l)/2;
+            String sd = func(m, s, t, arr);
+            if (!sd.isEmpty()) {
+                ans = sd;
+                r = m-1;
+            } else l = m+1;
+        }
+        return ans;
+    }   
+
+    private String func(int m, String s, String t, int[] ff) {
+        int[] arr = Arrays.copyOf(ff, ff.length);
+        int six = t.length();
+        int c = 0;
+        for(int i = 0; i < s.length(); i++) {
+            if (i < m) {
+               
+                if (arr[s.charAt(i)] > 0) {
+                    c++;
+                }
+                 arr[s.charAt(i)]--;
+            } else {
+               
+                if (arr[s.charAt(i)] > 0) {
+                    c++;
+                }
+                 arr[s.charAt(i)]--;
+
+
+                arr[s.charAt(i-m)]++;
+                
+                if (arr[s.charAt(i-m)] > 0) {
+                    c--;
+                }
+                
+                
+            }
+            if (c == six && i-m+1 >=0 && i+1 <= s.length()) return s.substring(i-m+1, i+1);
+
+        }
+        return "";
+    }
+}
+
+
+
+MISTAKES
+🔴 Compile-time bug (first)
+String ans = ""; 
+int ans = Integer.MAX_VALUE;
+
+👉 Same variable name twice → won’t compile.
+
+🔴 1. arr is getting corrupted across calls
+
+You pass the same arr into func():
+
+String sd = func(m, s, t, arr);
+
+Inside func() you mutate it:
+
+arr[s.charAt(i)]--;
+arr[s.charAt(i-m)]++;
+
+👉 So after first call, arr is no longer original frequency of t
+
+Next binary search iteration runs on already modified array → completely wrong results.
+
+✅ Fix
+
+Make a fresh copy inside func():
+
+int[] freq = Arrays.copyOf(arr, arr.length);
+
+And use freq instead.
+
+🔴 2. Wrong indexing (i - 'A' vs direct char)
+
+Here:
+
+arr[i - 'A']++;
+
+But later:
+
+arr[s.charAt(i)]--;
+
+👉 Mismatch:
+
+One uses 'A' offset
+Other uses raw ASCII
+
+This corrupts indexing.
+NLOGN BS
+N -> SLiding window
