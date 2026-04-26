@@ -1,0 +1,47 @@
+   124. Binary Tree Maximum Path Sum
+Solved
+Hard
+Topics
+premium lock icon
+Companies
+A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.
+
+The path sum of a path is the sum of the node's values in the path.
+
+Given the root of a binary tree, return the maximum path sum of any non-empty path.
+
+
+class Solution {
+    int ans = Integer.MIN_VALUE;
+
+    public int maxPathSum(TreeNode root) {
+        dfs(root);
+        return ans;
+    }
+
+    private int dfs(TreeNode root) {
+        if (root == null) return 0;
+
+        int left = Math.max(0, dfs(root.left));   // ignore negative
+        int right = Math.max(0, dfs(root.right)); // ignore negative
+
+        // case: path THROUGH this node
+        ans = Math.max(ans, left + right + root.val);
+
+        // return: best ONE side path
+        return root.val + Math.max(left, right);
+    }
+}
+
+Bug 1: ans not initialized to Integer.MIN_VALUE
+You initialize ans = 0, but the tree can contain all negative values. For a tree like [-3], the answer is -3, but your code returns 0.
+Bug 2: Base case return 0 is wrong for the same reason
+When a child is null, you return 0 (meaning "take nothing"). That's correct conceptually — you just don't extend the path through null. But since ans starts at 0, a single negative node is never recorded. Fixing ans initialization alone resolves this.
+Bug 3 (Logic): Base case calls maxPathSum recursively — wrong method
+Your recursive call maxPathSum(root.left) re-enters the public method, which re-checks root == null and returns 0. This accidentally works, but it's semantically wrong — the public method isn't designed to be the recursive helper. It'll also reset ans conceptually (though since ans is an instance field it survives — still, it's fragile and confusing).
+
+
+
+-------------------------------------------
+
+
