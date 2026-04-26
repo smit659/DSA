@@ -32,6 +32,8 @@ class Solution {
         return root.val + Math.max(left, right);
     }
 }
+You're returning x(root) instead of ans.
+x(root) returns the best single downward branch from root — that's not the answer. The answer is ans, which tracks the best path that can bend at any node.
 
 Bug 1: ans not initialized to Integer.MIN_VALUE
 You initialize ans = 0, but the tree can contain all negative values. For a tree like [-3], the answer is -3, but your code returns 0.
