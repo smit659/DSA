@@ -47,3 +47,29 @@ Your recursive call maxPathSum(root.left) re-enters the public method, which re-
 -------------------------------------------
 
 
+class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);
+
+        for (ListNode i : lists) {
+            while (i != null) {
+                pq.add(i);
+                i = i.next;
+            }
+        }
+
+        ListNode dummy = new ListNode();
+        ListNode root = dummy;
+
+        while (!pq.isEmpty()) {
+            ListNode node = pq.poll();
+
+            root.next = node;
+            root = root.next;
+
+            root.next = null; // 🔥 important to avoid old links
+        }
+
+        return dummy.next;
+    }
+}
