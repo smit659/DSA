@@ -103,3 +103,65 @@ lass Solution {
 
 
 ====================================================
+You are given an integer array nums. You are initially positioned at the array's first index, and each element in the array represents your maximum jump length at that position.
+
+Return true if you can reach the last index, or false otherwise.
+
+class Solution {
+    public boolean canJump(int[] nums) {
+        Boolean dp[] = new Boolean[nums.length];
+        return solve(0, nums, dp);
+    }
+
+    private boolean solve(int i, int[] nums, Boolean[] dp) {
+        if (i == nums.length-1) return true;
+        if (i >= nums.length) return false;
+        if (dp[i] != null) return dp[i];
+        for(int j = nums[i] ; j > 0 ; j--) {
+            if (solve(i+j, nums, dp)) {
+                return dp[i] = true;
+            }
+        }
+        return dp[i] = false;
+    }
+}
+
+
+    class Solution {
+    public boolean canJump(int[] nums) {
+        Boolean dp[] = new Boolean[nums.length];
+        return solve(0, nums, dp);
+    }
+
+    private boolean solve(int i, int[] nums, Boolean[] dp) {
+        if (i == nums.length-1) return true;
+        if (i >= nums.length) return false;
+        if (dp[i] != null) return dp[i];
+        for(int j = nums[i] ; j > 0 ; j--) {
+            if (solve(i+j, nums, dp)) {
+                return dp[i] = true;
+            }
+        }
+        return dp[i] = false;
+    }
+}
+
+o(n2)
+
+2^n (without memoization)
+
+below is greedy O(n)
+class Solution {
+    public boolean canJump(int[] nums) {
+        int maxReach = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            if (i > maxReach) return false;
+            maxReach = Math.max(maxReach, i + nums[i]);
+        }
+
+        return true;
+    }
+}
+
++======================
