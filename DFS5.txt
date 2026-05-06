@@ -165,3 +165,176 @@ class Solution {
 }
 
 +======================
+
+    class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Set<String> set = new HashSet<>(wordDict);
+        Boolean[] dp = new Boolean[s.length()];
+        return rec(0, s, set, dp);
+    }
+
+    private boolean rec(int i, String s, Set<String> set, Boolean[] dp) {
+        if (i == s.length()) return true;
+        if (dp[i] != null) return dp[i];
+
+        for (int j = i + 1; j <= s.length(); j++) {
+            if (set.contains(s.substring(i, j)) && rec(j, s, set, dp)) {
+                return dp[i] = true;
+            }
+        }
+
+        return dp[i] = false;
+    }
+}
+
+
+❌ Miss 1: String.concat() is O(1)
+
+Reality: ❌ O(n)
+
+Java String is immutable
+Every concat ⇒ new string + copy all chars
+
+👉 Cost per call = O(length of string)
+
+❌ Miss 2: Stack space is large because recursion is exponential
+
+Reality: ❌ Stack = O(n)
+
+Depth depends on longest path, not total calls
+You only go from i → i+1 → ... → n
+
+👉 Max recursion depth = n
+
+3)
+
+Blockade valid path => {
+    class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Set<String> wDict = new HashSet<>(wordDict);
+        Boolean dp[] = new Boolean[s.length()];
+        return solve(0, s, wDict, "");
+    }
+
+    private boolean solve(int i, String s, Set<String> wDict, String str) {
+        str = str.concat(String.valueOf(s.charAt(i)));
+        boolean ans = false;
+        if ( i == s.length() -1) {
+            if (wDict.contains(str)) return true;
+            else return false;
+        }
+        if (dp[i] != null) return dp[i];
+        
+        if (wDict.contains(str)) {
+            ans = ans || solve(i+1, s, wDict, "",);
+        }
+        ans = ans || solve(i+1, s, wDict, str);
+        return dp[i] = ans;
+    }
+}
+}
+
+
+TRIE Solution
+class Solution {
+    
+    class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+        boolean isWord;
+    }
+    
+    TrieNode root = new TrieNode();
+    Boolean[] dp;
+    
+    public boolean wordBreak(String s, List<String> wordDict) {
+        buildTrie(wordDict);
+        dp = new Boolean[s.length()];
+        return solve(0, s);
+    }
+    
+    private boolean solve(int i, String s) {
+        if (i == s.length()) return true;
+        
+        if (dp[i] != null) return dp[i];
+        
+        TrieNode node = root;
+        
+        for (int j = i; j < s.length(); j++) {
+            char c = s.charAt(j);
+            
+            if (node.children[c - 'a'] == null) break;
+            
+            node = node.children[c - 'a'];
+            
+            if (node.isWord && solve(j + 1, s)) {
+                return dp[i] = true;
+            }
+        }
+        
+        return dp[i] = false;
+    }
+    
+    private void buildTrie(List<String> dict) {
+        for (String word : dict) {
+            TrieNode node = root;
+            for (char c : word.toCharArray()) {
+                if (node.children[c - 'a'] == null) {
+                    node.children[c - 'a'] = new TrieNode();
+                }
+                node = node.children[c - 'a'];
+            }
+            node.isWord = true;
+        }
+    }
+}
+
+
+
+🔢 Number of Trie nodes
+
+Depends on total characters in dictionary.
+
+Let:
+
+W = number of words
+L = average word length
+
+Worst case (no shared prefixes):
+
+Total nodes = W * L
+
+Best case (all share prefix):
+
+Total nodes ≈ L
+📦 Space per node
+
+Each node stores:
+
+26 pointers + 1 boolean
+
+So:
+
+Space = O(26 * total_nodes) ≈ O(total_nodes)
+
+👉 constants ignored
+
+✅ Trie Space
+O(total characters in dictionary)
+
+or
+
+O(W * L)
+3️⃣ Recursion stack
+
+Depth:
+
+max depth = n
+Space = O(n)
+🧾 Final Space Complexity
+DP array        → O(n)
+Recursion stack → O(n)
+Trie            → O(W * L)
+🎯 Total
+O(n + W * L)
+Time = O(n²)
+Space = O(n + total trie nodes)
