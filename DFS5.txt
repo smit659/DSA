@@ -338,3 +338,120 @@ Trie            → O(W * L)
 O(n + W * L)
 Time = O(n²)
 Space = O(n + total trie nodes)
+
+-----------------------------------
+
+CLONE DEEP 
+
+class Solution {
+    public Node cloneGraph(Node node) {
+        if (node == null) return null;
+
+        Queue<Pair<Node, Node>> q = new LinkedList<>();
+
+        Node cloneRoot = new Node(node.val);
+
+        q.add(new Pair<>(node, cloneRoot));
+
+        Map<Node, Node> map = new HashMap<>();
+        map.put(node, cloneRoot);
+
+        while (!q.isEmpty()) {
+            Pair<Node, Node> x = q.poll();
+
+            Node original = x.getKey();
+            Node clone = x.getValue();
+
+            List<Node> cloneNeighbors = new ArrayList<>();
+
+            for (Node i : original.neighbors) {
+
+                Node j;
+
+                if (map.containsKey(i)) {
+                    j = map.get(i);
+                } else {
+                    j = new Node(i.val);
+                    map.put(i, j);
+                    q.add(new Pair<>(i, j));
+                }
+
+                cloneNeighbors.add(j);
+            }
+
+            clone.neighbors = cloneNeighbors;
+        }
+
+        return cloneRoot;
+    }
+}
+
+class Solution {
+
+    Map<Node, Node> map = new HashMap<>();
+
+    public Node cloneGraph(Node node) {
+        if (node == null) return null;
+
+        return dfs(node);
+    }
+
+    private Node dfs(Node r) {
+
+        if (map.containsKey(r)) {
+            return map.get(r);
+        }
+
+        Node c = new Node(r.val);
+
+        map.put(r, c);
+
+        List<Node> n = new ArrayList<>();
+
+        for (Node i : r.neighbors) {
+            n.add(dfs(i));
+        }
+
+        c.neighbors = n;
+
+        return c;
+    }
+}
+
+
+-----------------------------------------
+void setZeroes(vector<vector<int>>& matrix) {
+        bool isZeroCol = false;
+        bool isZeroRow = false;
+        for (int i = 0; i < matrix.size(); i++) { //check the first column
+            if (matrix[i][0] == 0) {
+                isZeroCol = true;
+                break;
+            } 
+        }
+        for (int i = 0; i < matrix[0].size(); i++) { //check the first row
+            if (matrix[0][i] == 0) {
+                isZeroRow = true;
+                break;
+            } 
+        }
+        for (int i = 1; i < matrix.size(); i++) { //check except the first row and column
+            for (int j = 1; j < matrix[0].size(); j++) 
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+        }
+        for (int i = 1; i < matrix.size(); i++) { //process except the first row and column
+           for (int j = 1; j < matrix[0].size(); j++) 
+               if (matrix[i][0] == 0 || matrix[0][j] == 0)
+                   matrix[i][j] = 0;
+        }
+        if (isZeroCol) { //handle the first column
+            for (int i = 0; i < matrix.size(); i++) 
+                matrix[i][0] = 0;
+        }
+        if (isZeroRow) { //handle the first row
+            for (int i = 0; i < matrix[0].size(); i++) 
+                matrix[0][i] = 0;
+        }
