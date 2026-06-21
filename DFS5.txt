@@ -558,3 +558,81 @@ Tree becomes:
   3   3
 
 (Conceptually, left now points to the inverted right subtree.)
+
+-----------------------------------------------------------------------
+424. Longest Repeating Character Replacement
+Solved
+Medium
+Topics
+premium lock icon
+Companies
+You are given a string s and an integer k. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most k times.
+
+Return the length of the longest substring containing the same letter you can get after performing the above operations.
+
+ 
+
+Example 1:
+
+Input: s = "ABAB", k = 2
+Output: 4
+
+
+
+class Solution {
+    public int characterReplacement(String s, int k) {
+        int l = 0, r = 0,  maxi = 1, maxC = 0;
+        int c[] = new int[26];
+        while (r < s.length()) {
+            maxC = Math.max(maxC, ++c[s.charAt(r)-'A']);
+            if (r-l+1 - maxC > k) {
+                c[s.charAt(l)-'A']--;
+                l++;
+            }
+            maxi = Math.max(maxi, r-l+1);
+            r++;
+        }
+        return maxi;
+    }
+}
+
+
+
+_________________________________________________________________________________
+Given a string s, return the number of palindromic substrings in it.
+
+A string is a palindrome when it reads the same backward as forward.
+
+A substring is a contiguous sequence of characters within the string.
+
+ 
+ 
+class Solution {
+    public int countSubstrings(String s) {
+        int ans  = 0;
+        Boolean dp[][] = new Boolean[s.length()][s.length()];
+        
+        for(int i = 0; i < s.length(); i++) {
+            for (int j = i+1; j < s.length(); j++) {
+                if (s.charAt(i) == s.charAt(j)) {
+                    if (solve(i+1, j-1, s, dp)) {
+                        ans += 1;
+                    }
+                }
+            }
+        }
+        return ans + s.length();
+    }
+
+    private boolean solve(int i, int j, String s, Boolean  [][] dp) {
+        if (i >= j) return true;
+        if (i >= s.length() || j < 0) return false;
+        if (dp[i][j] != null) return dp[i][j];
+        if (s.charAt(i) == s.charAt(j)) {
+            return dp[i][j] = solve(i+1, j-1, s, dp);
+        } else return false;
+    }
+}
+
+_________________________________________________________________________________
+
