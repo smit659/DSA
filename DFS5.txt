@@ -716,3 +716,88 @@ class Solution {
         return dp[0][0];
     }
 }
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int dp[]= new int[nums.length+1];
+        for(int i = nums.length-1; i >= 0; i--) {
+            for(int  j = -1; j < i; j++) {
+                int s = j==-1 || nums[j] < nums[i] ? 1 + dp[i+1] : 0;
+                dp[j+1] = Math.max(s, dp[j+1]);
+            }
+        }
+        return dp[0];
+    }
+}
+
+---------------------
+class Solution {
+    public int getSum(int a, int b) {
+      int c; 
+      while(b !=0 ) {
+        c = (a&b);
+        a = a ^ b;
+        b = (c)<<1;
+      }
+      return a;
+        
+    }
+}
+class Solution {
+    public int getSum(int a, int b) {
+      int c = 0, ans  = 0;
+      for(int i = 0; i < 32; i++) {
+        int x  = (a>>i) & 1;
+        int y = (b>>i) & 1;
+        int sumBit = (x^y^c);
+        ans = ans | (sumBit <<i);
+        c = (x & y) | (x & c) | (y & c);
+      }  
+      return ans;
+    }
+}
+_________________
+class Solution {
+    public void reorderList(ListNode head) {
+
+        if (head == null || head.next == null) {
+            return;
+        }
+
+        // Find middle
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Reverse second half
+        ListNode prev = null;
+        ListNode curr = slow.next;
+        slow.next = null;
+
+        while (curr != null) {
+            ListNode next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+
+        // Merge two halves
+        ListNode first = head;
+        ListNode second = prev;
+
+        while (second != null) {
+
+            ListNode t1 = first.next;
+            ListNode t2 = second.next;
+
+            first.next = second;
+            second.next = t1;
+
+            first = t1;
+            second = t2;
+        }
+    }
+}
