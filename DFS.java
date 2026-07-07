@@ -563,3 +563,100 @@ class Solution {
         return l.stream().mapToInt(Integer::intValue).toArray();
     }
 }
+
+
+---------------------------------
+	class WordDictionary {
+    Trie root;
+    public WordDictionary() {
+        root = new Trie();
+    }
+    
+    public void addWord(String word) {
+        root.add(word);
+    }
+    
+    public boolean search(String word) {
+      Trie t = root;
+      if (dfs(t, word.toCharArray(), 0)) {
+        return true;
+      }
+      return false;
+    }
+
+    private boolean dfs(Trie t, char[] word, int k) {
+        if (t == null) return false;
+        if (t.isEnd && k == word.length) return true;
+        
+        if (k == word.length && t.isEnd == false) return false;
+        if (word[k] == '.') {
+            for(int i = 0; i < 26; i++) {
+                if (dfs(t.t[i], word, k+1)) {
+                    return true;
+                }
+            }
+        } else {
+            if (dfs(t.t[word[k]-'a'], word, k+1))
+                return true;
+        }
+        return false;
+    }
+}
+
+class Trie {
+    Trie [] t = new Trie[26];
+    boolean isEnd;
+
+    public void add(String word) {
+        Trie temp = this;
+        for(char i : word.toCharArray()) {
+            Trie x = temp.t[i-'a'];
+            if (x == null) {
+                temp.t[i-'a'] = new Trie();
+            }
+            temp = temp.t[i-'a'];
+        }
+        temp.isEnd = true;
+    }
+} 
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * boolean param_2 = obj.search(word);
+ */
+TC
+O(26^d × L) worst case, usually much faster in practice because it only explores matching Trie branches.
+
+	Mistakes
+	Null check should come first
+
+You wrote:
+
+if (t.isEnd && k == word.length) return true;
+if (t == null) return false;
+
+If t is null, you'll get a NullPointerException on t.isEnd.
+
+Correct order:
+
+if (t == null) return false;
+
+if (k == word.length)
+    return t.isEnd;
+3. Base case can be simplified
+
+Instead of
+
+if (t.isEnd && k == word.length) return true;
+if (k == word.length && t.isEnd == false) return false;
+
+just write
+
+if (k == word.length)
+    return t.isEnd;
+
+This covers both cases.
+
+	
